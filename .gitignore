@@ -1,0 +1,57 @@
+# Gen_Gnm_DOSYALAR/KLASÖRLER
+###########################
+
+# Derlenmiş çıktılar ve ara dosyalar
+build/
+Build/
+Debug/
+Release/
+Objects/
+Listings/
+MDK-ARM/
+RTE/
+
+# Çıktı formatları
+*.hex
+*.bin
+*.elf
+*.out
+*.map
+*.o
+*.obj
+*.d
+*.a
+*.lib
+*.so
+*.lst
+*.su
+
+# IDE ve Editör Özel Ayar Dosyaları
+###################################
+
+# STM32CubeIDE / Eclipse
+.settings/
+*.launch
+
+# Keil µVision
+*.uvopt
+*.uvoptx
+*.uvgui.*
+*.scvd
+*.build_log.htm
+
+# IAR EWARM
+settings/
+Output/
+*.ewd
+*.dep
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# Diğer
+*.bak
+*.tmp
+*.swo
+*.swp
