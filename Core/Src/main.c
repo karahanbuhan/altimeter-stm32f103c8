@@ -21,7 +21,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "bmp180.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -31,10 +31,6 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
-/* HAL library expects 7-bit I2C adress to be 1 bit shifted to left.
- * Our address is 0x76, shifted is 0xEC (or just 0x76 << 1) */
-#define BAROMETER_BMP280_ADDRESS (0x76 << 1)
 
 /* USER CODE END PD */
 
@@ -70,18 +66,9 @@ static void MX_I2C1_Init(void);
 int main(void)
 {
 	/* USER CODE BEGIN 1 */
-	const float PRESSURE_CHANGE_THRESHOLD = 5.0f;
-	const uint32_t STABLE_BLINK_RATE_MS = 500;
-
 	float temperature = 0.0f;
 	float pressure = 0.0f;
-	uint32_t delay_time = 1000;
-
-	int numBlinks = 0;
-	int i = 0;
-
-	float previous_pressure = 0.0f;
-	float pressure_difference = 0.0f;
+	int bmp180_connected = 0;
 	/* USER CODE END 1 */
 
 	/* MCU Configuration--------------------------------------------------------*/
@@ -104,14 +91,7 @@ int main(void)
 	MX_GPIO_Init();
 	MX_I2C1_Init();
 	/* USER CODE BEGIN 2 */
-	if (BMP180_Init() == 0)
-	{
-		/* If sensor init fails, lock program in Error_Handler */
-		Error_Handler();
-	}
 
-	/* Get an initial pressure reading to use as our first 'previous_pressure' */
-	BMP180_Read_Temp_Pressure(&temperature, &previous_pressure);
 	/* USER CODE END 2 */
 
 	/* Infinite loop */
@@ -121,43 +101,23 @@ int main(void)
 		/* USER CODE END WHILE */
 
 		/* USER CODE BEGIN 3 */
-		/* USER CODE BEGIN 3 */
+		bmp180_connected = HAL_I2C_IsDeviceReady(&hi2c1, (0x76 << 1), 3, 100) == HAL_OK;
+		if (!bmp180_connected) {
+			/* Let's try reset to recover in case peripheral was reconnected  */
+			/* This recover wouldn't be required in case SDL was disconnected however if the clock were to disconnected
+			 * I2C would crash thus require de-initilization even if the connection was re-established so we need to reset it */
+			HAL_I2C_DeInit(&hi2c1);
+			MX_I2C1_Init();
 
-		/* 1. Read the sensor data */
-		/* USER CODE BEGIN 3 */
-
-		/* 1. Read the CURRENT sensor data */
-		BMP180_Read_Temp_Pressure(&temperature, &pressure);
-
-		/* 2. Calculate the change since the last reading */
-		pressure_difference = pressure - previous_pressure;
-
-		/* 3. Apply logic based on the change */
-
-		/* Check if pressure DECREASED (device went UP) */
-		if (pressure_difference < -PRESSURE_CHANGE_THRESHOLD)
-		{
-			/* Device is moving UP: Turn LED solid ON */
-			HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_RESET); /* RESET = LED ON */
-		}
-		/* Check if pressure INCREASED (device went DOWN) */
-		else if (pressure_difference > PRESSURE_CHANGE_THRESHOLD)
-		{
-			/* Device is moving DOWN: Turn LED solid OFF */
-			HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_SET); /* SET = LED OFF */
-		}
-		/* Otherwise, the change is within the threshold (STABLE) */
-		else
-		{
-			/* Device is STABLE: Toggle the LED to make it blink */
-			HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
+			/* We cannot do anything without the barometer so skip this cycle */
+			continue;
 		}
 
-		/* 4. Update the 'previous_pressure' for the next loop's comparison */
-		previous_pressure = pressure;
+		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_RESET);
+		HAL_Delay(200);
+		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_SET);
+		HAL_Delay(200);
 
-		/* 5. Set the loop speed. This also acts as the blink rate for stable mode. */
-		HAL_Delay(STABLE_BLINK_RATE_MS);
 		/* USER CODE END 3 */
 	}
 	/* USER CODE END 3 */
