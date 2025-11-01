@@ -93,6 +93,11 @@ int main(void)
   MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
 
+  /* Enable DWT Cycle Counter to delay in microseconds */
+  CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
+  DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk;
+  DWT->CYCCNT = 0;
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -118,6 +123,15 @@ int main(void)
 		HAL_Delay(200);
 		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_SET);
 		HAL_Delay(200);
+
+
+		/* Pin 4 is DIO, 5 is CLCK */
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
+		HAL_Delay(100);
+		/* Start by reset all */
+
+
 	}
 	/* USER CODE END 3 */
 }
@@ -236,6 +250,20 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+
+void delay_us(uint32_t us) {
+	/* Get the system clock frequency */
+	uint32_t cycles_per_us = (HAL_RCC_GetHCLKFreq() / 1000000);
+
+	/* Calculate the number of cycles to wait */
+	uint32_t start_cycle = DWT->CYCCNT;
+	uint32_t wait_cycles = us * cycles_per_us;
+
+	/* Loop until the required cycles have passed */
+	while ((DWT->CYCCNT - start_cycle) < wait_cycles) {
+		/* Do nothing here, wait */
+	}
+}
 
 /* USER CODE END 4 */
 
