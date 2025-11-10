@@ -118,7 +118,7 @@ int main(void) {
 		}
 
 		/* If 7-Segments successful, set P13 on */
-		if (TM1637_SetDisplay(1) && TM1637_AllOn()) {
+		if (TM1637_SetDisplay(1) && TM1637_DisplayDigits(1, 5, 2, 'A', 1)) {
 			HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_RESET);
 		} else {
 			HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_SET);

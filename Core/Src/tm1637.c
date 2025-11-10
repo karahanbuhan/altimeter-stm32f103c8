@@ -2,17 +2,17 @@
 #include "main.h"
 
 static void us_delay(uint32_t us);
+static void convert_digit_to_segment_byte(uint8_t *digit);
 static void start(void);
 static void write_byte(uint8_t data_byte);
 static int acknowledge(void);
 static void terminate(void);
 
-
 int TM1637_SetDisplay(uint32_t on) {
 	/* 10001000 or 0x88 (Display On) */
 	start();
 	if (on) {
-	 	write_byte(0b10001000);
+		write_byte(0b10001000);
 	} else {
 		write_byte(0b10000000);
 	}
@@ -21,6 +21,102 @@ int TM1637_SetDisplay(uint32_t on) {
 	}
 	terminate();
 	return 1;
+}
+
+int TM1637_Display(uint16_t number, uint8_t show_colon) {
+	int first_digit, second_digit, third_digit, fourth_digit;
+	/* Show numbers between 9999 to -999 (I will implement - first), if higher or lower show error */
+}
+
+int TM1637_DisplayDigits(uint8_t first_digit, uint8_t second_digit, uint8_t third_digit, uint8_t fourth_digit, uint8_t show_colon) {
+	convert_digit_to_segment_byte(&first_digit);
+	convert_digit_to_segment_byte(&second_digit);
+	convert_digit_to_segment_byte(&third_digit);
+	convert_digit_to_segment_byte(&fourth_digit);
+
+	/* 11000000 = 0xC0 Address Command Set, we will set the segments later */
+	start();
+	write_byte(0b11000000);
+	if (!acknowledge()) {
+		return 0;
+	}
+
+	write_byte(first_digit);
+	if (!acknowledge()) {
+		return 0;
+	}
+
+	/* Column bit is stored in the most significant bit of the second cell */
+	if (show_colon) {
+		second_digit = second_digit + 0b10000000;
+	}
+	write_byte(second_digit);
+	if (!acknowledge()) {
+		return 0;
+	}
+
+	write_byte(third_digit);
+	if (!acknowledge()) {
+		return 0;
+	}
+
+	write_byte(fourth_digit);
+	if (!acknowledge()) {
+		return 0;
+	}
+
+	terminate();
+	return 1;
+}
+
+static void convert_digit_to_segment_byte(uint8_t *digit_ptr) {
+	uint8_t digit = *digit_ptr;
+	uint8_t segment_byte;
+	switch (digit) {
+	case 0:
+		segment_byte = 0b00111111;
+		break;
+	case 1:
+		segment_byte = 0b0000110;
+		break;
+	case 2:
+		segment_byte = 0b01011011;
+		break;
+	case 3:
+		segment_byte = 0b01001111;
+		break;
+	case 4:
+		segment_byte = 0b01100110;
+		break;
+	case 5:
+		segment_byte = 0b01101101;
+		break;
+	case 6:
+		segment_byte = 0b01111101;
+		break;
+	case 7:
+		segment_byte = 0b00000111;
+		break;
+	case 8:
+		segment_byte = 0b01111111;
+		break;
+	case 9:
+		segment_byte = 0b01101111;
+		break;
+	case 'A':
+		segment_byte = 0b01110111;
+		break;
+	case 'E':
+		segment_byte = 0b01111001;
+		break;
+	case 'e':
+		segment_byte = 0b01111011;
+		break;
+	default:
+		/* Default all off */
+		segment_byte = 0b00000000;
+	}
+	*digit_ptr = segment_byte;
 }
 
 int TM1637_AllOn(void) {
