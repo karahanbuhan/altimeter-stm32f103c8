@@ -48,7 +48,7 @@ int TM1637_DisplayDigits(uint8_t first_digit, uint8_t second_digit, uint8_t thir
 
 	/* Column bit is stored in the most significant bit of the second cell */
 	if (show_colon) {
-		second_digit = second_digit + 0b10000000;
+		second_digit = second_digit | 0b10000000;
 	}
 	write_byte(second_digit);
 	if (!acknowledge()) {
