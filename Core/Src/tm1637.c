@@ -8,6 +8,9 @@ static void write_byte(uint8_t data_byte);
 static int acknowledge(void);
 static void terminate(void);
 
+int TM1637_DisplayErr();
+int TM1637_DisplayDigits(uint8_t first_digit, uint8_t second_digit, uint8_t third_digit, uint8_t fourth_digit, uint8_t show_colon);
+
 int TM1637_SetDisplay(uint32_t on) {
 	/* 10001000 or 0x88 (Display On) */
 	start();
@@ -23,12 +26,57 @@ int TM1637_SetDisplay(uint32_t on) {
 	return 1;
 }
 
-int TM1637_Display(uint16_t number, uint8_t show_colon) {
-	int first_digit, second_digit, third_digit, fourth_digit;
-	/* Show numbers between 9999 to -999 (I will implement - first), if higher or lower show error */
+int TM1637_DisplayNumber(int16_t number, uint8_t show_colon) {
+	uint8_t first_digit, second_digit, third_digit, fourth_digit;
+
+	if ((unsigned) (number + 999) > 10998) {
+		return TM1637_DisplayErr();
+	} else if (number < 0) {
+		first_digit = '-';
+		number *= -1;
+	} else {
+		first_digit = number / 1000;
+		number -= first_digit * 1000;
+	}
+
+	fourth_digit = number % 10;
+	number -= fourth_digit;
+
+	second_digit = number / 100;
+	number -= second_digit * 100;
+
+	third_digit = number / 10;
+
+	if (first_digit == '-') {
+		if (third_digit + second_digit == 0) {
+			third_digit = '-';
+			second_digit = ' ';
+			first_digit = ' ';
+		} else if (second_digit == 0) {
+			second_digit = '-';
+			first_digit = ' ';
+		}
+	}
+
+	if (first_digit == 0) {
+		first_digit = ' ';
+		if (second_digit == 0) {
+			second_digit = ' ';
+			if (third_digit == 0) {
+				third_digit = ' ';
+			}
+		}
+	}
+
+	return TM1637_DisplayDigits(first_digit, second_digit, third_digit, fourth_digit, show_colon);
 }
 
-int TM1637_DisplayDigits(uint8_t first_digit, uint8_t second_digit, uint8_t third_digit, uint8_t fourth_digit, uint8_t show_colon) {
+int TM1637_DisplayErr() {
+	return TM1637_DisplayDigits('E', 'r', 'r', ' ', 0);
+}
+
+int TM1637_DisplayDigits(uint8_t first_digit, uint8_t second_digit,
+		uint8_t third_digit, uint8_t fourth_digit, uint8_t show_colon) {
 	convert_digit_to_segment_byte(&first_digit);
 	convert_digit_to_segment_byte(&second_digit);
 	convert_digit_to_segment_byte(&third_digit);
@@ -111,6 +159,12 @@ static void convert_digit_to_segment_byte(uint8_t *digit_ptr) {
 		break;
 	case 'e':
 		segment_byte = 0b01111011;
+		break;
+	case 'r':
+		segment_byte = 0b01010000;
+		break;
+	case '-':
+		segment_byte = 0b01000000;
 		break;
 	default:
 		/* Default all off */
