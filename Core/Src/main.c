@@ -51,7 +51,7 @@ I2C_HandleTypeDef hi2c1;
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
-static void MX_I2C1_Init(void);
+void MX_I2C1_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -72,7 +72,6 @@ float calculate_altitude_from_sea_level(float sea_level_mb, float current_mb) {
 int main(void) {
 
 	/* USER CODE BEGIN 1 */
-	int bmp280_connected = 0;
 	/* Pressure unit used is milibars rounded. */
 	float sea_level_mb = 1013.25f;
 	float current_mb = 0.0f;
@@ -175,7 +174,7 @@ void SystemClock_Config(void) {
  * @param None
  * @retval None
  */
-static void MX_I2C1_Init(void) {
+void MX_I2C1_Init(void) {
 
 	/* USER CODE BEGIN I2C1_Init 0 */
 
