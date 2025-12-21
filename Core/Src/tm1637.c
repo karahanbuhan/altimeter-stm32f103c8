@@ -157,6 +157,15 @@ static void convert_digit_to_segment_byte(uint8_t *digit_ptr) {
 	case 'E':
 		segment_byte = 0b01111001;
 		break;
+	case 'H':
+		segment_byte = 0b11110110;
+		break;
+	case 'L':
+		segment_byte = 0b00111000;
+		break;
+	case 'P':
+		segment_byte = 0b01110011;
+		break;
 	case 'e':
 		segment_byte = 0b01111011;
 		break;

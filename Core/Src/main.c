@@ -17,11 +17,13 @@
  */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
+#include <bmp280.h>
 #include "main.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "tm1637.h"
+#include <stdint.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -50,14 +52,17 @@ I2C_HandleTypeDef hi2c1;
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_I2C1_Init(void);
-void us_delay(uint32_t us);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+/* Returns altitude from sea level pressure difference in meters */
+float calculate_altitude_from_sea_level(float sea_level_mb, float current_mb) {
+	/* 1 meter elevate change is 0.12mb in pressure */
+	return (sea_level_mb - current_mb) / 0.12f;
+}
 /* USER CODE END 0 */
 
 /**
@@ -67,7 +72,11 @@ void us_delay(uint32_t us);
 int main(void) {
 
 	/* USER CODE BEGIN 1 */
-	int bmp180_connected = 0;
+	int bmp280_connected = 0;
+	/* Pressure unit used is milibars rounded. */
+	float sea_level_mb = 1013.25f;
+	float current_mb = 0.0f;
+	int altitude = 0; /* We are going to use int to round the result */
 	/* USER CODE END 1 */
 
 	/* MCU Configuration--------------------------------------------------------*/
@@ -104,21 +113,22 @@ int main(void) {
 		/* USER CODE END WHILE */
 
 		/* USER CODE BEGIN 3 */
-		bmp180_connected = HAL_I2C_IsDeviceReady(&hi2c1, (0x76 << 1), 3, 100)
-				== HAL_OK;
-		if (!bmp180_connected) {
-			/* Let's try reset to recover in case peripheral was reconnected  */
-			/* This recover wouldn't be required in case SDL was disconnected however if the clock were to disconnected
-			 * I2C would crash thus require de-initilization even if the connection was re-established so we need to reset it */
-			HAL_I2C_DeInit(&hi2c1);
-			MX_I2C1_Init();
-
-			/* We cannot do anything without the barometer so skip this cycle */
+		if (!TM1637_SetDisplay(1)) {
+			/* Neither altitude nor errors can be shown without display, skip */
 			continue;
 		}
 
+		if (!BMP280_Init()) {
+			/* Show error if barometer not initializing and skip this cycle */
+			TM1637_DisplayErr();
+			continue;
+		}
+
+		current_mb = BMP280_Read_Pressure();
+		altitude = calculate_altitude_from_sea_level(sea_level_mb, current_mb);
+
 		/* If 7-Segments successful, set P13 on */
-		if (TM1637_SetDisplay(1) && TM1637_DisplayNumber(5*5*5, 0)) {
+		if (TM1637_DisplayNumber(altitude, 0)) {
 			HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_RESET);
 		} else {
 			HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_SET);
