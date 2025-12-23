@@ -73,12 +73,13 @@ int main(void) {
 
 	/* USER CODE BEGIN 1 */
 	/* Pressure unit used is milibars rounded. */
-	float sea_level_mb = 1017.0f;
+	float sea_level_pressure = 1013.0f;
 	float current_temperature = 0.0f;
 	float current_pressure = 0.0f;
-	int altitude = 0; /* We are going to use int to round the result */
+	float altitude = 0; /* We are going to use int to round the result */
 	int bmp_fail = 0;
 	int tm_fail = 0;
+	int mode = 3;
 	/* USER CODE END 1 */
 
 	/* MCU Configuration--------------------------------------------------------*/
@@ -119,6 +120,7 @@ int main(void) {
 		/* USER CODE BEGIN 3 */
 		if (tm_fail) {
 			/* Neither altitude nor errors can be shown without display, skip */
+			tm_fail = TM1637_SetDisplay(1);
 			continue;
 		}
 
@@ -131,10 +133,23 @@ int main(void) {
 
 		current_temperature = BMP280_Read_Temperature(&hi2c1);
 		current_pressure = BMP280_Read_Pressure(&hi2c1);
-		altitude = calculate_altitude_from_sea_level(sea_level_mb,
+		altitude = calculate_altitude_from_sea_level(sea_level_pressure,
 				current_pressure);
 
-		TM1637_DisplayNumber(altitude, 0);
+		if (mode == 0) {
+			TM1637_DisplayNumber((int) altitude, 0);
+		} else if (mode == 1) {
+			TM1637_DisplayNumber((int) current_pressure, 0);
+		} else if (mode == 2) {
+			TM1637_DisplayNumber((int) current_temperature, 0);
+		} else if (mode == 3) {
+			/* This is edit mode */
+			TM1637_DisplayNumber((int) sea_level_pressure, 0);
+			HAL_Delay(500);
+			tm_fail = TM1637_SetDisplay(0);
+			HAL_Delay(500);
+			tm_fail = TM1637_SetDisplay(1);
+		}
 
 		HAL_Delay(1000);
 	}
