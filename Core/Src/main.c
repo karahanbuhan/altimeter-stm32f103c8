@@ -79,7 +79,8 @@ int main(void) {
 	float altitude = 0; /* We are going to use int to round the result */
 	int bmp_fail = 0;
 	int tm_fail = 0;
-	int mode = 3;
+	int mode = 0;
+	int update_screen = 0;
 	/* USER CODE END 1 */
 
 	/* MCU Configuration--------------------------------------------------------*/
@@ -118,40 +119,74 @@ int main(void) {
 		/* USER CODE END WHILE */
 
 		/* USER CODE BEGIN 3 */
-		if (tm_fail) {
-			/* Neither altitude nor errors can be shown without display, skip */
-			tm_fail = TM1637_SetDisplay(1);
-			continue;
+		if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_4) == GPIO_PIN_SET) {
+			HAL_Delay(50);
+			if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_4) == GPIO_PIN_SET) {
+
+				mode++;
+				if (mode > 3)
+					mode = 0;
+
+				TM1637_SetDisplay(1);
+				update_screen = 1;
+
+				while (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_4) == GPIO_PIN_SET)
+					;
+			}
 		}
 
-		if (bmp_fail) {
-			/* Show error if barometer not initializing and skip this cycle */
-			bmp_fail = BMP280_Init(&hi2c1);
-			TM1637_DisplayErr();
-			continue;
+		if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_1) == GPIO_PIN_SET) {
+			HAL_Delay(50);
+			if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_1) == GPIO_PIN_SET) {
+
+				if (mode == 3) {
+					sea_level_pressure += 1.0;
+					if (sea_level_pressure > 1050)
+						sea_level_pressure = 950;
+				}
+
+				update_screen = 1;
+			}
 		}
 
-		current_temperature = BMP280_Read_Temperature(&hi2c1);
-		current_pressure = BMP280_Read_Pressure(&hi2c1);
-		altitude = calculate_altitude_from_sea_level(sea_level_pressure,
-				current_pressure);
+		if (HAL_GetTick() % 1000 == 0 || update_screen) {
+			update_screen = 0;
 
-		if (mode == 0) {
-			TM1637_DisplayNumber((int) altitude, 0);
-		} else if (mode == 1) {
-			TM1637_DisplayNumber((int) current_pressure, 0);
-		} else if (mode == 2) {
-			TM1637_DisplayNumber((int) current_temperature, 0);
-		} else if (mode == 3) {
-			/* This is edit mode */
-			TM1637_DisplayNumber((int) sea_level_pressure, 0);
-			HAL_Delay(500);
-			tm_fail = TM1637_SetDisplay(0);
-			HAL_Delay(500);
-			tm_fail = TM1637_SetDisplay(1);
+			if (tm_fail) {
+				/* Neither altitude nor errors can be shown without display, skip */
+				tm_fail = TM1637_SetDisplay(1);
+				continue;
+			}
+
+			if (bmp_fail) {
+				/* Show error if barometer not initializing and skip this cycle */
+				bmp_fail = BMP280_Init(&hi2c1);
+				TM1637_DisplayErr();
+				continue;
+			}
+
+			current_temperature = BMP280_Read_Temperature(&hi2c1);
+			current_pressure = BMP280_Read_Pressure(&hi2c1);
+			altitude = calculate_altitude_from_sea_level(sea_level_pressure,
+					current_pressure);
+
+			if (mode == 0) {
+				TM1637_DisplayNumber((int) altitude, 0);
+			} else if (mode == 1) {
+				TM1637_DisplayNumber((int) current_pressure, 0);
+			} else if (mode == 2) {
+				TM1637_DisplayDigits(' ', 't', (int) current_temperature / 10,
+						(int) current_temperature % 10, 1);
+			} else if (mode == 3) {
+				/* This is edit mode */
+				TM1637_DisplayNumber((int) sea_level_pressure, 0);
+				if (HAL_GetTick() / 1000 % 4 == 0) {
+					tm_fail = TM1637_SetDisplay(0);
+				} else {
+					tm_fail = TM1637_SetDisplay(1);
+				}
+			}
 		}
-
-		HAL_Delay(1000);
 	}
 	/* USER CODE END 3 */
 }
@@ -250,6 +285,18 @@ static void MX_GPIO_Init(void) {
 	GPIO_InitStruct.Pull = GPIO_NOPULL;
 	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
 	HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+
+	/*Configure GPIO pin : PA4 */
+	GPIO_InitStruct.Pin = GPIO_PIN_4;
+	GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+	GPIO_InitStruct.Pull = GPIO_PULLDOWN;
+	HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+	/*Configure GPIO pin : PB1 */
+	GPIO_InitStruct.Pin = GPIO_PIN_1;
+	GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+	GPIO_InitStruct.Pull = GPIO_PULLDOWN;
+	HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
 	/*Configure GPIO pins : PB4 PB5 */
 	GPIO_InitStruct.Pin = GPIO_PIN_4 | GPIO_PIN_5;
