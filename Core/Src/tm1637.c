@@ -20,10 +20,10 @@ int TM1637_SetDisplay(uint32_t on) {
 		write_byte(0b10000000);
 	}
 	if (!acknowledge()) {
-		return 0;
+		return 1;
 	}
 	terminate();
-	return 1;
+	return 0;
 }
 
 int TM1637_DisplayNumber(int16_t number, uint8_t show_colon) {
@@ -86,12 +86,12 @@ int TM1637_DisplayDigits(uint8_t first_digit, uint8_t second_digit,
 	start();
 	write_byte(0b11000000);
 	if (!acknowledge()) {
-		return 0;
+		return 1;
 	}
 
 	write_byte(first_digit);
 	if (!acknowledge()) {
-		return 0;
+		return 1;
 	}
 
 	/* Column bit is stored in the most significant bit of the second cell */
@@ -100,21 +100,21 @@ int TM1637_DisplayDigits(uint8_t first_digit, uint8_t second_digit,
 	}
 	write_byte(second_digit);
 	if (!acknowledge()) {
-		return 0;
+		return 1;
 	}
 
 	write_byte(third_digit);
 	if (!acknowledge()) {
-		return 0;
+		return 1;
 	}
 
 	write_byte(fourth_digit);
 	if (!acknowledge()) {
-		return 0;
+		return 1;
 	}
 
 	terminate();
-	return 1;
+	return 0;
 }
 
 static void convert_digit_to_segment_byte(uint8_t *digit_ptr) {
@@ -188,7 +188,7 @@ int TM1637_AllOn(void) {
 	start();
 	write_byte(0b01000000);
 	if (!acknowledge()) {
-		return 0;
+		return 1;
 	}
 	terminate();
 
@@ -196,19 +196,19 @@ int TM1637_AllOn(void) {
 	start();
 	write_byte(0b11000000);
 	if (!acknowledge()) {
-		return 0;
+		return 1;
 	}
 
 	/* Send x4 0xFFs as addresses to set all segments on */
 	for (int i = 0; i < 4; i++) {
 		write_byte(0xff);
 		if (!acknowledge()) {
-			return 0;
+			return 1;
 		}
 	}
 	terminate();
 
-	return 1;
+	return 0;
 }
 
 static void start(void) {
