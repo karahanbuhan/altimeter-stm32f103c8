@@ -104,6 +104,10 @@ int main(void) {
 	MX_I2C1_Init();
 	/* USER CODE BEGIN 2 */
 
+	/* USER CODE BEGIN 2 */
+
+	/* USER CODE END 2 */
+
 	/* Enable DWT Cycle Counter to delay in microseconds */
 	CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
 	DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk;
@@ -171,10 +175,13 @@ int main(void) {
 					current_pressure);
 
 			if (mode == 0) {
+				tm_fail = TM1637_SetDisplay(1);
 				TM1637_DisplayNumber((int) altitude, 0);
 			} else if (mode == 1) {
+				tm_fail = TM1637_SetDisplay(1);
 				TM1637_DisplayNumber((int) current_pressure, 0);
 			} else if (mode == 2) {
+				tm_fail = TM1637_SetDisplay(1);
 				TM1637_DisplayDigits(' ', 't', (int) current_temperature / 10,
 						(int) current_temperature % 10, 1);
 			} else if (mode == 3) {

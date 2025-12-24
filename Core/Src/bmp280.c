@@ -71,36 +71,50 @@ float BMP280_Read_Temperature(I2C_HandleTypeDef *hi2c1) {
 
 // Returns Pressure in Pascals (Divide by 100 for hPa)
 float BMP280_Read_Pressure(I2C_HandleTypeDef *hi2c1) {
-	// Safety: If t_fine is 0, temp hasn't been read yet.
-	// Pressure calc depends on t_fine.
-	if (t_fine == 0) {
-		BMP280_Read_Temperature(hi2c1);
-	}
+    if (t_fine == 0) {
+        BMP280_Read_Temperature(hi2c1);
+    }
 
-	uint8_t raw[3];
-	// Read 0xF7, 0xF8, 0xF9
-	HAL_I2C_Mem_Read(hi2c1, BMP280_ADDR, 0xF7, 1, raw, 3, 100);
+    uint8_t raw[3];
+    if (HAL_I2C_Mem_Read(hi2c1, BMP280_ADDR, 0xF7, 1, raw, 3, 100) != HAL_OK) {
+        BMP280_Init(hi2c1);
+        return 0.0f;
+    }
 
-	int32_t adc_P = (raw[0] << 12) | (raw[1] << 4) | (raw[2] >> 4);
+    int32_t adc_P = (raw[0] << 12) | (raw[1] << 4) | (raw[2] >> 4);
 
-	// Standard Bosch Compensation (64-bit for precision)
-	int64_t var1, var2, p;
-	var1 = ((int64_t) t_fine) - 128000;
-	var2 = var1 * var1 * (int64_t) dig_P6;
-	var2 = var2 + ((var1 * (int64_t) dig_P5) << 17);
-	var2 = var2 + (((int64_t) dig_P4) << 35);
-	var1 = ((var1 * var1 * (int64_t) dig_P3) >> 8)
-			+ ((var1 * (int64_t) dig_P2) << 12);
-	var1 = (((((int64_t) 1) << 47) + var1)) * ((int64_t) dig_P1) >> 33;
+    if (adc_P == 0x80000) {
+        BMP280_Init(hi2c1);
+        HAL_Delay(10);
 
-	if (var1 == 0)
-		return 0; // Avoid exception caused by division by zero
+        HAL_I2C_Mem_Read(hi2c1, BMP280_ADDR, 0xF7, 1, raw, 3, 100);
+        adc_P = (raw[0] << 12) | (raw[1] << 4) | (raw[2] >> 4);
 
-	p = 1048576 - adc_P;
-	p = (((p << 31) - var2) * 3125) / var1;
-	var1 = (((int64_t) dig_P9) * (p >> 13) * (p >> 13)) >> 25;
-	var2 = (((int64_t) dig_P8) * p) >> 19;
-	p = ((p + var1 + var2) >> 8) + (((int64_t) dig_P7) << 4);
+        if (adc_P == 0x80000) return 0.0f;
+    }
 
-	return (float) p / 25600.0f;
+    int64_t var1, var2, p;
+    var1 = ((int64_t) t_fine) - 128000;
+    var2 = var1 * var1 * (int64_t) dig_P6;
+    var2 = var2 + ((var1 * (int64_t) dig_P5) << 17);
+    var2 = var2 + (((int64_t) dig_P4) << 35);
+    var1 = ((var1 * var1 * (int64_t) dig_P3) >> 8)
+            + ((var1 * (int64_t) dig_P2) << 12);
+    var1 = (((((int64_t) 1) << 47) + var1)) * ((int64_t) dig_P1) >> 33;
+
+    if (var1 == 0) return 0;
+
+    p = 1048576 - adc_P;
+    p = (((p << 31) - var2) * 3125) / var1;
+    var1 = (((int64_t) dig_P9) * (p >> 13) * (p >> 13)) >> 25;
+    var2 = (((int64_t) dig_P8) * p) >> 19;
+    p = ((p + var1 + var2) >> 8) + (((int64_t) dig_P7) << 4);
+
+    float final_pressure = (float) p / 25600.0f;
+
+    if (final_pressure < 700.0f && final_pressure > 0.1f) {
+         BMP280_Init(hi2c1);
+    }
+
+    return final_pressure;
 }
