@@ -8,10 +8,17 @@ A simple altimeter built with an STM32F103C8T6 and a BMP280 sensor. The MCU read
 - Pressure (in millibars) reading mode.
 
 ## Images
-<img width="792" height="1120" alt="image" src="https://github.com/user-attachments/assets/aaed7c57-f774-40c7-bea2-d800759ac413" />
-<img width="940" height="560" alt="image" src="https://github.com/user-attachments/assets/7fbf1d40-9cf8-4ce8-aaf0-b956fa8a332d" />
+## Altimeter Modes (Meters)
+<img width="792" height="1120" alt="Altimeter Mode" src="https://github.com/user-attachments/assets/aaed7c57-f774-40c7-bea2-d800759ac413" />
+<img width="940" height="560" alt="Altimeter Mode" src="https://github.com/user-attachments/assets/7fbf1d40-9cf8-4ce8-aaf0-b956fa8a332d" />
 
-## Video
+## Showing Pressure (Millibars)
+<img width="738" height="490" alt="Pressure Mode" src="https://github.com/user-attachments/assets/c18e3038-b07a-4650-b6b2-a2c207a784e9" />
+
+## Showing Temperature (Celsius Degrees)
+<img width="732" height="460" alt="image" src="https://github.com/user-attachments/assets/c29c0ebf-fb40-491c-b6b4-a609de4c6b8c" />
+
+## Video
 TODO!
 
 ## Bill of Materials (BOM)
