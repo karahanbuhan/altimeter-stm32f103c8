@@ -32,8 +32,29 @@ TODO!
 | **Consumables (Wire, Solder)**| $1.00 | $4.00 |
 | **Total** | **$9.00** | **~$25.50** |
 
-## Schematics
-TODO!
+## Schematic
+```mermaid
+graph TD
+    %% MCU
+    STM32{STM32}
+
+    %% POWER
+    BAT[2x AA Batteries] -- 3V and GND --> STM32
+
+    %% SENSORS
+    STM32 -- I2C SCL PB6 SDA PB7 --> BMP[BMP280 Sensor]
+    STM32 -- CLK PB5 DIO PB4 --> SCREEN[TM1637 Display]
+
+    %% BUTTON CONNECTIONS
+    BTN1[Buton MOD] -- PA4 --> STM32
+    BTN2[Buton EDIT] -- PB1 --> STM32
+
+    %% POWER RAIL
+    BAT -. VCC GND .-> BMP
+    BAT -. VCC GND .-> SCREEN
+    BAT -. VCC .-> BTN1
+    BAT -. VCC .-> BTN2
+```
 
 ## Tests & Calibration
 TODO!
