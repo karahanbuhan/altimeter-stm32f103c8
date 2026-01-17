@@ -56,5 +56,4 @@ graph TD
     BAT -. VCC .-> BTN2
 ```
 
-## Tests & Calibration
-TODO!
+*P.S* This project was created for the embedded systems course assigment. I was able to create a working prototype for this altimeter however tests and calibrations were not done as goal of this project was to learn about I2C, GPIO and how to design and build a system using these features. However, using a pertinax board with my beginner level soldering/electronics skills was definitely a bad choice as a known problem is a short circuit or no contact problem which causes screen to freeze rarely. Other than that was a quite fun project and I am going to definitely use a PCB design in my next embedded project.
