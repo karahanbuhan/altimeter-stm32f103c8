@@ -28,7 +28,7 @@ TODO!
 | **BMP280 Sensor** | $1.50 | $5.00 |
 | **TM1637 Display** | $1.50 | $4.50 |
 | **2x AA Batteries** | $1.00 | $2.00 |
-| **Pertinax Board (5x7 cm)** | $0.50 | $2.00 |
+| **Pertinax Board (6x8 cm)** | $0.50 | $2.00 |
 | **Consumables (Wire, Solder)**| $1.00 | $4.00 |
 | **Total** | **$9.00** | **~$25.50** |
 
