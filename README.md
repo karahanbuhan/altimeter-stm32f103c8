@@ -57,4 +57,11 @@ graph TD
     BAT -. VCC .-> BTN2
 ```
 
-**P.S** This project was created for the embedded systems course assigment. I was able to create a working prototype for this altimeter however tests and calibrations were not done as goal of this project was to learn about I2C, GPIO and how to design and build a system using these features. However, using a pertinax board with my beginner level soldering/electronics skills was definitely a bad choice as a known problem is a short circuit or no contact problem which causes screen to freeze rarely. Other than that, it was quite fun project. I am going to definitely design a PCB in my next embedded project.
+## Project Status: Archived / Prototype
+This project served as a proof-of-concept for the Embedded Systems course, focusing on I2C communication, GPIO manipulation, and system integration on the STM32F103.
+### Known Limitations & Retrospective:
+**Calibration:** The sensor data is raw. No compensation algorithms or unit tests were implemented.
+
+**Hardware Stability:** The prototype relies on a pertinax (perfboard) circuit. Mechanical instability and signal integrity issues (short/open circuits) occasionally cause the display to freeze, likely due to I2C bus lockups.
+
+**Next Steps:** Future iterations would require a custom PCB design to resolve these mechanical reliability issues.
