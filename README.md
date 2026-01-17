@@ -65,3 +65,6 @@ This project served as a proof-of-concept for the Embedded Systems course, focus
 **Hardware Stability:** The prototype relies on a pertinax (perfboard) circuit. Mechanical instability and signal integrity issues (short/open circuits) occasionally cause the display to freeze, likely due to I2C bus lockups.
 
 **Next Steps:** Future iterations would require a custom PCB design to resolve these mechanical reliability issues.
+
+## License
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
