@@ -18,8 +18,9 @@ A simple altimeter built with an STM32F103C8T6 and a BMP280 sensor. The MCU read
 ## Showing Temperature (Celsius Degrees)
 <img width="732" height="460" alt="image" src="https://github.com/user-attachments/assets/c29c0ebf-fb40-491c-b6b4-a609de4c6b8c" />
 
-## Video
-TODO!
+### Demo Videos
+- **[Project Walkthrough (YouTube)](https://www.youtube.com/watch?v=ruwWq_uKEkQ)** - Detailed explanation of the implementation (in Turkish).
+- **[Live Demo (Shorts)](https://www.youtube.com/shorts/OypFeyjmf-c)** - Quick look at the altimeter features in action.
 
 ## Bill of Materials (BOM)
 | Component | Low Estimate (Target) | High Estimate (Local/Branded) |
