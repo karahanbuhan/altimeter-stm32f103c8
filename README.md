@@ -57,14 +57,5 @@ graph TD
     BAT -. VCC .-> BTN2
 ```
 
-## Project Status: Archived / Prototype
-This project served as a proof-of-concept for the Embedded Systems course, focusing on I2C communication, GPIO manipulation, and system integration on the STM32F103.
-### Known Limitations & Retrospective:
-**Calibration:** The sensor data is raw. No compensation algorithms or unit tests were implemented.
-
-**Hardware Stability:** The prototype relies on a pertinax (perfboard) circuit. Mechanical instability and signal integrity issues (short/open circuits) occasionally cause the display to freeze, likely due to I2C bus lockups.
-
-**Next Steps:** Future iterations would require a custom PCB design to resolve these mechanical reliability issues.
-
 ## License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
