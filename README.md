@@ -36,25 +36,33 @@ A simple altimeter built with an STM32F103C8T6 and a BMP280 sensor. The MCU read
 ## Schematic
 ```mermaid
 graph TD
-    %% MCU
-    STM32{STM32}
+    %% PROCESSING UNIT
+    subgraph MCU [Main Controller]
+        STM32{STM32F103C8T6}
+    end
 
-    %% POWER
-    BAT[2x AA Batteries] -- 3V and GND --> STM32
+    %% INPUTS
+    subgraph Inputs [User Interface]
+        BTN1[MOD Button] -- "GPIO: PA4" --> STM32
+        BTN2[EDIT Button] -- "GPIO: PB1" --> STM32
+    end
 
-    %% SENSORS
-    STM32 -- I2C SCL PB6 SDA PB7 --> BMP[BMP280 Sensor]
-    STM32 -- CLK PB5 DIO PB4 --> SCREEN[TM1637 Display]
+    %% PERIPHERALS
+    subgraph Peripherals [I/O Modules]
+        BMP[BMP280 Sensor]
+        SCREEN[TM1637 Display]
+    end
 
-    %% BUTTON CONNECTIONS
-    BTN1[Buton MOD] -- PA4 --> STM32
-    BTN2[Buton EDIT] -- PB1 --> STM32
+    %% LOGIC CONNECTIONS (CLEAN FLOW)
+    STM32 -- "SCL: PB6, SDA: PB7" --> BMP
+    STM32 -- "CLK: PB5, DIO: PB4" --> SCREEN
 
-    %% POWER RAIL
-    BAT -. VCC GND .-> BMP
-    BAT -. VCC GND .-> SCREEN
-    BAT -. VCC .-> BTN1
-    BAT -. VCC .-> BTN2
+    %% COMPACT HARDWARE NOTES (FIXED SYNTAX)
+    note1["All modules powered by 3V VCC and GND"]
+    note2["BMP280: CSB to VCC, SDO to GND"]
+    
+    note1 --- MCU
+    note2 --- BMP
 ```
 
 ## License
