@@ -110,11 +110,5 @@ float BMP280_Read_Pressure(I2C_HandleTypeDef *hi2c1) {
     var2 = (((int64_t) dig_P8) * p) >> 19;
     p = ((p + var1 + var2) >> 8) + (((int64_t) dig_P7) << 4);
 
-    float final_pressure = (float) p / 25600.0f;
-
-    if (final_pressure < 700.0f && final_pressure > 0.1f) {
-         BMP280_Init(hi2c1);
-    }
-
-    return final_pressure;
+    return (float) p / 25600.0f;
 }
