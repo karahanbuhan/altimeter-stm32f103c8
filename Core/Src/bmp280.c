@@ -11,7 +11,7 @@ static uint16_t dig_P1;
 static int16_t dig_P2, dig_P3, dig_P4, dig_P5, dig_P6, dig_P7, dig_P8, dig_P9;
 static int32_t t_fine = 0; // Shared thermal variable
 
-int BMP280_Init(I2C_HandleTypeDef *hi2c1) {
+uint8_t BMP280_Init(I2C_HandleTypeDef *hi2c1) {
 	// ERROR 1: Device not found (Wrong Address or Wiring)
 	if (HAL_I2C_IsDeviceReady(hi2c1, BMP280_ADDR, 5, 100) != HAL_OK) {
 		return 1;

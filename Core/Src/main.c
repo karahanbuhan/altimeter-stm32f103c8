@@ -82,9 +82,10 @@ int main(void) {
 	/* Altitude unit is meters */
 	float altitude = 0;
 
-	/* Error codes for sensor and display failing */
-	int sensor_fail = 0;
-	int display_fail = 0;
+	/* Error codes for sensor and display failing, error for bit packaging the two errors */
+	uint8_t sensor_error = 0;
+	uint8_t display_error = 0;
+	uint8_t error = 0;
 
 	/* Display mode, can be switched with the button */
 	int mode = 0;
@@ -121,8 +122,8 @@ int main(void) {
 	DWT->CYCCNT = 0;
 
 	/* Initialize display and sensor (barometer/temperature sensor) */
-	display_fail = TM1637_SetDisplay(1);
-	sensor_fail = BMP280_Init(&hi2c1);
+	display_error = TM1637_SetDisplay(1);
+	sensor_error = BMP280_Init(&hi2c1);
 
 	/* USER CODE END 2 */
 
@@ -132,9 +133,15 @@ int main(void) {
 		/* USER CODE END WHILE */
 
 		/* USER CODE BEGIN 3 */
+		/* Error code is bit packaged here to blink or show in display */
+		error = ((display_error & 0x1) | ((sensor_error & 0x3) << 1)) & 0x7;
+		if (error != 0) {
+			/* TODO Output error */
 
-		current_pressure = BMP280_Read_Temperature(&hi2c1);
-		TM1637_DisplayNumber((int) current_pressure, 0);
+		}
+
+		pressure = BMP280_Read_Temperature(&hi2c1);
+		TM1637_DisplayNumber((int) pressure, 0);
 	}
 	/* USER CODE END 3 */
 }
