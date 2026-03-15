@@ -52,7 +52,6 @@ I2C_HandleTypeDef hi2c1;
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
-static void MX_I2C1_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -130,11 +129,12 @@ int main(void)
 		/* Error code is bit packaged here to blink or show in display */
 		error = ((display_error & 0x1) | ((sensor_error & 0x3) << 1)) & 0x7;
 		if (error != 0) {
-			/* TODO Output error on display too */
-			PC13_Handle_Error(current_time, error);
+			TM1637_DisplayErr(error);
+			PC13_DisplayError(current_time, error);
 		}
+		/* TODO: Cleanup error */
 
-		pressure = BMP280_Read_Temperature(&hi2c1);
+		pressure = BMP280_ReadTemperature(&hi2c1);
 		TM1637_DisplayNumber((int) pressure, 0);
 	}
   /* USER CODE END 3 */
@@ -181,7 +181,7 @@ void SystemClock_Config(void)
   * @param None
   * @retval None
   */
-static void MX_I2C1_Init(void)
+void MX_I2C1_Init(void)
 {
 
   /* USER CODE BEGIN I2C1_Init 0 */

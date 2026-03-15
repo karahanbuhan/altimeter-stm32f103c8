@@ -50,7 +50,7 @@ uint8_t BMP280_Init(I2C_HandleTypeDef *hi2c1) {
 }
 
 // Returns Temperature in Celsius
-float BMP280_Read_Temperature(I2C_HandleTypeDef *hi2c1) {
+float BMP280_ReadTemperature(I2C_HandleTypeDef *hi2c1) {
 	uint8_t raw[3];
 	// Read 0xFA, 0xFB, 0xFC
 	HAL_I2C_Mem_Read(hi2c1, BMP280_ADDR, 0xFA, 1, raw, 3, 100);
@@ -70,9 +70,9 @@ float BMP280_Read_Temperature(I2C_HandleTypeDef *hi2c1) {
 }
 
 // Returns Pressure in Pascals (Divide by 100 for hPa)
-float BMP280_Read_Pressure(I2C_HandleTypeDef *hi2c1) {
+float BMP280_ReadPressure(I2C_HandleTypeDef *hi2c1) {
     if (t_fine == 0) {
-        BMP280_Read_Temperature(hi2c1);
+        BMP280_ReadTemperature(hi2c1);
     }
 
     uint8_t raw[3];

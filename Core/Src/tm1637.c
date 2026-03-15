@@ -8,7 +8,7 @@ static void write_byte(uint8_t data_byte);
 static int acknowledge(void);
 static void terminate(void);
 
-int TM1637_DisplayErr();
+int TM1637_DisplayErr(uint8_t error);
 int TM1637_DisplayDigits(uint8_t first_digit, uint8_t second_digit, uint8_t third_digit, uint8_t fourth_digit, uint8_t show_colon);
 
 uint8_t TM1637_SetDisplay(uint32_t on) {
@@ -30,7 +30,7 @@ int TM1637_DisplayNumber(int16_t number, uint8_t show_colon) {
 	uint8_t first_digit, second_digit, third_digit, fourth_digit;
 
 	if ((unsigned) (number + 999) > 10998) {
-		return TM1637_DisplayErr();
+		return TM1637_DisplayErr(8);
 	} else if (number < 0) {
 		first_digit = '-';
 		number *= -1;
@@ -71,8 +71,9 @@ int TM1637_DisplayNumber(int16_t number, uint8_t show_colon) {
 	return TM1637_DisplayDigits(first_digit, second_digit, third_digit, fourth_digit, show_colon);
 }
 
-int TM1637_DisplayErr() {
-	return TM1637_DisplayDigits('E', 'r', 'r', ' ', 0);
+int TM1637_DisplayErr(uint8_t error) {
+	/* TODO: If error is 0, skip */
+	return TM1637_DisplayDigits('E', 'r', 'r', error, 0);
 }
 
 int TM1637_DisplayDigits(uint8_t first_digit, uint8_t second_digit,

@@ -4,4 +4,6 @@
 #include <stdint.h>
 #include "main.h"
 
-void PC13_Handle_Error(uint32_t current_time, uint8_t error);
+void PC13_DisplayError(uint32_t current_time, uint8_t error);
+
+#endif
