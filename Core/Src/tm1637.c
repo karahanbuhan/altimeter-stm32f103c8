@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include <stdbool.h>
 #include "main.h"
 
 static void us_delay(uint32_t us);
@@ -11,7 +12,7 @@ static void terminate(void);
 int TM1637_DisplayError(uint8_t error);
 int TM1637_DisplayDigits(uint8_t first_digit, uint8_t second_digit, uint8_t third_digit, uint8_t fourth_digit, uint8_t show_colon);
 
-uint8_t TM1637_SetDisplay(uint32_t on) {
+uint8_t TM1637_SetDisplay(bool on) {
 	/* 10001000 or 0x88 (Display On) */
 	start();
 	if (on) {

@@ -24,6 +24,7 @@
 #include "tm1637.h"
 #include "bmp280.h"
 #include "pc13.h"
+#include <stdbool.h>
 #include <stdint.h>
 /* USER CODE END Includes */
 
@@ -116,6 +117,10 @@ int main(void)
   MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
   current_time = HAL_GetTick();
+
+  /* Initialize display and sensor */
+  display_error = TM1637_SetDisplay(true);
+  sensor_error = BMP280_Init();
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -125,8 +130,6 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 		current_time = HAL_GetTick();
-
-		/* TODO: Initialize display and sensor */
 		/* TODO: Add mode switch, button control */
 
 		/* Error code is bit packaged here to blink or show in display */
