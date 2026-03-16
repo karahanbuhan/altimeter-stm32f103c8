@@ -116,8 +116,6 @@ int main(void)
   MX_GPIO_Init();
   MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
-  current_time = HAL_GetTick();
-
   /* Initialize display and sensor */
   display_error = TM1637_SetDisplay(true);
   sensor_error = BMP280_Init();
