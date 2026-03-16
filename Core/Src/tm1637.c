@@ -26,6 +26,10 @@ uint8_t TM1637_SetDisplay(uint32_t on) {
 	return 0;
 }
 
+int TM1637_ClearDisplay() {
+	return TM1637_DisplayDigits(' ', ' ', ' ', ' ', 0);
+}
+
 int TM1637_DisplayNumber(int16_t number, uint8_t show_colon) {
 	uint8_t first_digit, second_digit, third_digit, fourth_digit;
 
@@ -72,7 +76,9 @@ int TM1637_DisplayNumber(int16_t number, uint8_t show_colon) {
 }
 
 int TM1637_DisplayErr(uint8_t error) {
-	/* TODO: If error is 0, skip */
+	if (error == 0) {
+		return 0; /* Skip if no error, main will update display with temperature value later so skip clearing display */
+	}
 	return TM1637_DisplayDigits('E', 'r', 'r', error, 0);
 }
 

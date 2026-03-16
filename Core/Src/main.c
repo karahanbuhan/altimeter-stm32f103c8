@@ -126,13 +126,13 @@ int main(void)
     /* USER CODE BEGIN 3 */
 		current_time = HAL_GetTick();
 
+		/* TODO: Initialize display and sensor */
+
 		/* Error code is bit packaged here to blink or show in display */
 		error = ((display_error & 0x1) | ((sensor_error & 0x3) << 1)) & 0x7;
-		if (error != 0) {
-			TM1637_DisplayErr(error);
-			PC13_DisplayError(current_time, error);
-		}
-		/* TODO: Cleanup error */
+		/* Both methods skip if error is 0 so no need for if conditions */
+		TM1637_DisplayErr(error);
+		PC13_DisplayError(current_time, error);
 
 		pressure = BMP280_ReadTemperature(&hi2c1);
 		TM1637_DisplayNumber((int) pressure, 0);
