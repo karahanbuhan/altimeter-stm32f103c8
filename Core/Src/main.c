@@ -131,7 +131,7 @@ int main(void)
 		/* TODO: Add mode switch, button control */
 
 		/* Error code is bit packaged here to blink or show in display */
-		error = ((display_error & 0x1) | ((sensor_error & 0x3) << 1)) & 0x8;
+		error = ((display_error & 0x1) | ((sensor_error & 0x3) << 1)) & 0x7;
 		/* Both methods skip if error is 0 so no need for if conditions */
 		TM1637_DisplayError(error);
 		PC13_DisplayError(current_time, error);
