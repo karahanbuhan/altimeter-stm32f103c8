@@ -9,14 +9,14 @@ A simple altimeter built with an STM32F103C8T6 and a BMP280 sensor. The MCU read
 
 ## Images
 ## Altimeter Modes (Meters)
-<img width="792" height="1120" alt="Altimeter Mode" src="https://karahanbuhan.com/i/f4d46414ae3f4fb188e84a25e78a4ec7.jpeg" />
-<img width="940" height="560" alt="Altimeter Mode" src="https://karahanbuhan.com/i/0c8841666dca4de6b5f0e6eb0c5ed592.png" />
+<img width="1200" alt="Altimeter Mode" src="https://karahanbuhan.com/i/f4d46414ae3f4fb188e84a25e78a4ec7.jpeg" />
+<img width="720" alt="Altimeter Mode" src="https://karahanbuhan.com/i/0c8841666dca4de6b5f0e6eb0c5ed592.png" />
 
 ## Showing Pressure (Millibars)
-<img width="738" height="490" alt="Pressure Mode" src="https://karahanbuhan.com/i/c5af77ea40984b5dad0fdc5644aa4c3d.png" />
+<img width="1200" alt="Pressure Mode" src="https://karahanbuhan.com/i/c5af77ea40984b5dad0fdc5644aa4c3d.png" />
 
 ## Showing Temperature (Celsius Degrees)
-<img width="732" height="460" alt="image" src="https://karahanbuhan.com/i/ffac436c5c6d49b7b6cca6364ef45abf.png" />
+<img width="1200" alt="image" src="https://karahanbuhan.com/i/ffac436c5c6d49b7b6cca6364ef45abf.png" />
 
 ### Demo Videos
 - **[Project Walkthrough (YouTube)](https://www.youtube.com/watch?v=ruwWq_uKEkQ)** - Detailed explanation of the implementation (in Turkish).
