@@ -8,7 +8,7 @@ A simple altimeter built with an STM32F103C8T6 and a BMP280 sensor. The MCU read
 - Pressure (in millibars) reading mode.
 
 ## Potential Use Cases
-- Weather balloons to measure height.
+- Weather balloons.
 - Aviation and aircrafts.
 - Mountaineering, skydiving and such extreme sports.
 
