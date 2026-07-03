@@ -7,6 +7,11 @@ A simple altimeter built with an STM32F103C8T6 and a BMP280 sensor. The MCU read
 - Temperature (in Celsius) reading mode.
 - Pressure (in millibars) reading mode.
 
+## Potential Use Cases
+- Can be used on weather balloons to measure height.
+- Aviation and aircrafts.
+- Mountaineering, skydiving and such extreme sports.
+
 ## Images
 ## Altimeter Modes (Meters)
 <img width="1200" alt="Altimeter Mode" src="https://karahanbuhan.com/i/f4d46414ae3f4fb188e84a25e78a4ec7.jpeg" />
